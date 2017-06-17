@@ -10,13 +10,15 @@ public class Conexao {
 
 	// BD_teste = studo_teste
 	// BD produção = STUDO
-	/*	
+	
+/*	
+ 
 	private static final String URL_CONEXAO = "jdbc:postgresql://localhost:5432/STUDO";
 	private static final String USUARIO = "postgres";
 	private static final String SENHA = "123456";*/
 	
 
-	private static final String URL_CONEXAO = "postgres://uhfnnqaklyktqt:f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e@ec2-54-197-232-155.compute-1.amazonaws.com:5432/d61lt994e6cods";
+	private static final String URL_CONEXAO = "jdbc:postgresql://ec2-54-197-232-155.compute-1.amazonaws.com:5432/d61lt994e6cods?user=uhfnnqaklyktqt&password=f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
 	private static final String USUARIO = "uhfnnqaklyktqt";
 	private static final String SENHA = "f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e";
 
