@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/pro.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Quetões" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Voltar" icon="fa fa-long-arrow-left"
+						styleClass="btnVoltar" outcome="/paginas/pro/atividade.xhtml" />
+					<p:commandButton value="Nova Questão" icon="fa fa-plus"
+						oncomplete="PF('dlgCadastro').show();" styleClass="btnNovo"
+						actionListener="#{quetaoController.novo}" update="dlgCad">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+			<p:panel>
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Disciplina: " styleClass="fonteNegrito" />
+					<h:outputLabel
+						value="#{quetaoController.atividade.disciplina.descricao}" />
+				</h:panelGrid>
+				<h:outputLabel value="Atividade: " styleClass="fonteNegrito" />
+				<h:outputLabel value="#{quetaoController.atividade.titulo}" />
+			</p:panel>
+			<p />
+			<!-- PAINEL DE QUESTÕES -->
+			<p:panel id="painelQuestao">
+				<h:outputLabel value="#{quetaoController.info}"
+					style="color: #da5825;" />
+				<p:accordionPanel value="#{quetaoController.questoes}" var="qt">
+					<p:tab title="#{qt.numero}) #{qt.descricao}">
+						<h:panelGrid columns="2" cellpadding="3">
+							<h:outputText value="Resposta: " style="font-weight: bold" />
+							<h:outputText value="#{qt.alt_correta}" style="color: green;" />
+
+						</h:panelGrid>
+						<h:panelGrid columns="2" cellpadding="3" rendered="#{qt.tipo==1}">
+
+							<h:outputText value="A) " styleClass="fonteNegrito" />
+							<h:outputText value="#{qt.alt_a}" />
+
+							<h:outputText value="B) " styleClass="fonteNegrito" />
+							<h:outputText value="#{qt.alt_b}" />
+
+							<h:outputText value="C) " styleClass="fonteNegrito" />
+							<h:outputText value="#{qt.alt_c}" />
+
+							<h:outputText value="D) " styleClass="fonteNegrito" />
+							<h:outputText value="#{qt.alt_d}" />
+
+							<h:outputText value="E) " styleClass="fonteNegrito" />
+							<h:outputText value="#{qt.alt_e}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="4" style="float: right;">
+							<p:commandButton id="del" icon="fa fa-trash" title="excluir"
+								styleClass="btnExcluir"
+								disabled="#{quetaoController.podeExcluir}"
+								oncomplete="PF('dlgExcluirQuestao').show();"
+								actionListener="#{quetaoController.getRowDel}" />
+							<p:tooltip for="del" value="Excluir" trackMouse="true" />
+
+							<p:commandButton id="edt" icon="fa fa-edit" title="editar"
+								styleClass="btnEditar" oncomplete="PF('dlgCadastro').show();"
+								actionListener="#{quetaoController.getRowEdit}" update=":dlgCad">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+							</p:commandButton>
+							<p:tooltip for="edt" value="Editar" trackMouse="true" />
+						</h:panelGrid>
+					</p:tab>
+				</p:accordionPanel>
+			</p:panel>
+		</h:form>
+
+		<!-- CADASTRO e EDIÇÃO DE QUESTÃO -->
+		<p:dialog header="#{quetaoController.txt}" widgetVar="dlgCadastro"
+			closable="false" id="dlgCad" draggable="true" resizable="false"
+			modal="true" appendTo="@(body)" responsive="true" showEffect="clip"
+			hideEffect="explode">
+
+			<p:ajax event="close" update=":formLista:painelQuestao"
+				listener="#{quetaoController.listarQuestoes}" />
+
+			<h:form id="formCadastro">
+				<h:panelGrid columns="6">
+					<p:outputLabel value="Nº *" styleClass="fonteNegrito" />
+					<p:inputText size="3" value="#{quetaoController.questao.numero}"
+						required="true" requiredMessage="O campo Nº é obrigatório"
+						maxlength="3">
+						<p:keyFilter regEx="/[0-9]/i" />
+					</p:inputText>
+
+					<p:outputLabel value="Tipo *" styleClass="fonteNegrito" />
+					<p:selectOneMenu value="#{quetaoController.questao.tipo}"
+						required="true" requiredMessage="O campo Tipo é obrigatório"
+						effect="fold">
+
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+						<f:selectItem itemValue="1" itemLabel="Multipla Escolha" />
+						<f:selectItem itemValue="2" itemLabel="Verdeiro ou Falso" />
+
+						<!-- EVENTO NA TELA -->
+						<p:ajax event="valueChange"
+							update=":formCadastro:alter :formCadastro:resposta"
+							listener="#{quetaoController.exibir}" />
+					</p:selectOneMenu>
+
+					<h:panelGrid columns="2" id="resposta">
+						<p:outputLabel value="Alt. Correta *" styleClass="fonteNegrito" />
+
+						<p:inputText size="5"
+							value="#{quetaoController.questao.alt_correta}"
+							rendered="#{quetaoController.exibir1}" required="true"
+							requiredMessage="O campo Alt. Correta é obrigatório"
+							maxlength="5" placeholder="ABCDE">
+							<p:keyFilter regEx="/[ABCDE]/i" />
+						</p:inputText>
+
+						<p:selectOneMenu value="#{quetaoController.questao.alt_correta}"
+							effect="fold" rendered="#{quetaoController.exibir2}"
+							required="true"
+							requiredMessage="O campo Alt. Correta é obrigatório">
+
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+							<f:selectItem itemValue="V" itemLabel="Verdadeira" />
+							<f:selectItem itemValue="F" itemLabel="Falsa" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</h:panelGrid>
+				<p />
+				<h:panelGrid id="alter">
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Descrição *" styleClass="fonteNegrito" />
+
+						<p:inputTextarea maxlength="1024" rows="2" cols="100"
+							required="true" requiredMessage="O campo Descrição é obrigatório"
+							value="#{quetaoController.questao.descricao}" />
+					</h:panelGrid>
+					<p:separator />
+					<h:panelGrid rendered="#{quetaoController.exibir1}">
+						<h:outputText value="Alternativas " styleClass="fonteNegrito" />
+						<h:panelGrid columns="2">
+
+							<p:outputLabel value="A) " styleClass="fonteNegrito" />
+							<p:inputTextarea maxlength="250" rows="1" cols="95"
+								value="#{quetaoController.questao.alt_a}" />
+							<p:outputLabel value="B) " styleClass="fonteNegrito" />
+							<p:inputTextarea maxlength="250" rows="1" cols="95"
+								value="#{quetaoController.questao.alt_b}" />
+							<p:outputLabel value="C) " styleClass="fonteNegrito" />
+							<p:inputTextarea maxlength="250" rows="1" cols="95"
+								value="#{quetaoController.questao.alt_c}" />
+							<p:outputLabel value="D) " styleClass="fonteNegrito" />
+							<p:inputTextarea maxlength="250" rows="1" cols="95"
+								value="#{quetaoController.questao.alt_d}" />
+							<p:outputLabel value="E) " styleClass="fonteNegrito" />
+							<p:inputTextarea maxlength="250" rows="1" cols="95"
+								value="#{quetaoController.questao.alt_e}" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="2" style="float:right">
+						<p:commandButton value="Salvar" icon="fa fa-save"
+							styleClass="btnSalvar"
+							oncomplete="validarCampo(xhr, status, args)"
+							actionListener="#{quetaoController.salvar}"
+							update=":msn :formCadastro" />
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btnSim" oncomplete="PF('dlgCadastro').hide();" />
+					</h:panelGrid>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- FORMULARIO DE EXCLUSÃO DE QUESTÃO -->
+		<p:dialog header="Excluir Questão" widgetVar="dlgExcluirQuestao"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="fade">
+			<h:form>
+				<h:panelGrid columns="2">
+					<h:outputText value="Deseja excluir essa questão?" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Sim" icon="ui-icon-trash"
+						styleClass="btnSim" actionListener="#{quetaoController.excluir}"
+						update=":msn :formLista:painelQuestao"
+						onclick="PF('dlgExcluirQuestao').hide();" />
+
+					<p:commandButton value="Não" icon="fa fa-times" styleClass="btnNao"
+						onclick="PF('dlgExcluirQuestao').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<script type="text/javascript">
+    function validarCampo(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgCadastro').jq.effect("shake", {times:5}, 100);            
+        }
+        else {
+            PF('dlgCadastro').hide();         
+        }
+    }
+	</script>
+	</ui:define>
+</ui:composition>

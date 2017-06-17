@@ -1,0 +1,80 @@
+@charset "UTF-8";
+/*Corpo*/
+body { 
+	background-repeat: repeat-x;
+	background-color: #3db0d1;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#9e9e9e), to(#454545));
+  	background-image: -webkit-linear-gradient(top, #51d4d4, #3db0d1);
+  	background-image:    -moz-linear-gradient(top, #51d4d4, #3db0d1);
+  	background-image:      -o-linear-gradient(top, #51d4d4, #3db0d1);
+	height: 500px;
+}
+/*Formulario*/
+.ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
+    cursor: text;
+    background: none #e5e5e5;
+    border: 1px solid #cccccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.0) !important;
+    -moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.0) !important;;
+    box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.075) !important;;
+    -webkit-transition: border linear 0.0s, box-shadow linear 0.0s !important;;
+    -moz-transition: border linear 0.0s, box-shadow linear 0.0s !important;;
+    -ms-transition: border linear 0.0s, box-shadow linear 0.0s !important;;
+    -o-transition: border linear 0.0s, box-shadow linear 0.0s !important;;
+    transition: border linear 0.0s, box-shadow linear 0.0s !important;;
+}
+.ui-inputfield, .ui-widget-content .ui-inputfield:hover, .ui-widget-header .ui-inputfield {
+    background: none #cdd9ed;
+}
+
+/*Cor do texto do cabeçalho */
+.ui-widget-header {
+	color: #329ccf;
+}
+.ui-dialog.ui-widget-content .ui-dialog-titlebar {
+    padding: 9px 15px;
+    border-bottom: 1px solid #eee;
+    background-color: #eff5fa;
+}
+.ui-dialog.ui-widget-content {
+    background-color: #F9F9F9;
+    border: 1px solid #CCC !important;
+    border: 1px solid #CCC !important;
+}
+.ui-widget-content .ui-button {
+    color: #050404;
+	background-image: -moz-linear-gradient(top, #51d4d4, #2e95ce);
+    background-image: -webkit-linear-gradient(top, #51d4d4, #2e95ce);
+    position: relative;
+    text-align: center;
+}
+
+/*rodapé*/
+.ui-widget-content {
+	color: #808080;
+}
+.ui-dialog .ui-dialog-footer {
+	background-color: #EEFFEE;
+}
+/*Logo*/
+.cabecalho {
+    background-image: url('../img/Studo.png') !important;
+}
+#btnLoguin{
+	background-color: #F9F9F9;
+}
+/*Botao*/
+.ui-widget-content .ui-button {
+	background: -webkit-gradient(linear, center top, center bottom, from(#0072aa), to(#0072aa));
+	background: -webkit-linear-gradient(#0072aa, #0072aa);
+	background: -moz-linear-gradient(#0072aa, #0072aa);
+	background: -o-linear-gradient(#0072aa, #0072aa);
+	background: -ms-linear-gradient(#0072aa, #0072aa);
+	background: linear-gradient(#0072aa, #0072aa);
+  	color: white;
+    position: relative;
+    text-align: center;
+}

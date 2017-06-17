@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+<h:head>
+	<title>Studo</title>
+	<h:outputStylesheet library="studo" name="styles/estilo.css" />
+</h:head>
+
+
+<h:body>
+	<p:growl id="msn" />
+
+	<p:layout fullPage="true">
+		<!-- cabeçalho -->
+		<p:layoutUnit id="top" position="north" size="50">
+			<!-- IMAGEM DO TOPO -->
+			<div class="aw-topbar">
+				<p:graphicImage library="studo" name="img/icon.png" />
+			</div>
+		</p:layoutUnit>
+
+		<p:layoutUnit id="bottom" position="south" size="40">
+			<p:outputLabel value="Versão: 1.0" style="float: right;" />
+
+		</p:layoutUnit>
+
+		<p:layoutUnit id="left" position="west" size="195" resizable="false"
+			closable="false" collapsible="true"
+			header="#{loginController.nomeUsuarioLogado}" minSize="200"
+			rendered="#{loginController.permissoes(2)}">
+
+			<h:form>
+				<p:menu>
+					<p:menuitem value="Meu Perfil" icon="fa fa-user"
+						url="/paginas/pro/perfil.xhtml" />
+					<p:menuitem value="Atividades" icon="fa fa-book"
+						url="/paginas/pro/atividade.xhtml" />
+					<p:menuitem value="Sair" icon="fa  fa-sign-out"
+						actionListener="#{loginController.sair}" styleClass="menuSecOut" />
+				</p:menu>
+			</h:form>
+		</p:layoutUnit>
+
+
+		<!-- CONTEUDO -->
+		<p:layoutUnit id="center" position="center"
+			rendered="#{loginController.permissoes(2)}">
+
+			<div id="conteudo">
+				<ui:insert name="conteudo" />
+			</div>
+
+		</p:layoutUnit>
+	</p:layout>
+
+</h:body>
+</html>

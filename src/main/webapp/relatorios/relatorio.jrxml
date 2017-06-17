@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-11-04T21:07:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9f9af936-ccfd-43ae-b6cb-b227f71b8040">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="COD_ATIVIDADE" class="java.lang.Long"/>
+	<parameter name="COD_TURMA" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT a.matricula,
+	a.nome,
+	SUM ( nota),
+	SUM( r.acerto)
+FROM aluno a
+	INNER JOIN turma_aluno ta ON 
+	 a.matricula = ta.matricula 
+	INNER JOIN resposta r ON 
+	 a.matricula = r.matricula 
+	INNER JOIN questao q ON 
+	 r.cod_questao = q.cod_questao 
+	INNER JOIN atividade t ON 
+	 q.cod_atividade = t.cod_atividade 
+WHERE 
+	 t.cod_atividade = $P{COD_ATIVIDADE} 
+	 AND
+	  ta.cod_turma =  $P{COD_TURMA} 
+GROUP BY a.matricula]]>
+	</queryString>
+	<field name="matricula" class="java.lang.Long"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="sum" class="java.lang.Double"/>
+	<field name="COLUMN_4" class="java.lang.Long"/>
+	<title>
+		<band height="70" splitType="Stretch">
+			<staticText>
+				<reportElement x="54" y="25" width="139" height="31" forecolor="#2669C7" uuid="c170c087-65c2-4f1e-8c6f-b52685c629a1"/>
+				<textElement>
+					<font fontName="Eras Bold ITC" size="24"/>
+				</textElement>
+				<text><![CDATA[Studo Web]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="1" width="50" height="50" uuid="86563f01-fa4f-4316-9f70-eb610a7e20a2"/>
+				<imageExpression><![CDATA["C:/Users/Teste/OneDrive/TCC/8º Semestre/Código Fonte/Studo/src/main/webapp/resources/studo/img/icone-relatorio.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="42" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="0" width="100" height="20" forecolor="#2669C7" backcolor="#2E100F" uuid="fac8ab05-47d0-418f-a973-d07a72c8e163"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matrícula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="0" width="216" height="20" forecolor="#2669C7" uuid="3a680799-f847-45aa-8dc2-8a7e840a45c9"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="0" width="66" height="20" forecolor="#2669C7" uuid="eccbf7c3-beff-4980-83ce-2a680e996416"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="1" width="133" height="20" forecolor="#2669C7" uuid="fe6f71bb-fbad-45d3-96e9-c21831f4bcce"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qtd. de acertos]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="3" y="0" width="100" height="20" forecolor="#666565" uuid="d901ba5f-4d56-4c3a-9906-cc1eedce2d77"/>
+				<textFieldExpression><![CDATA[$F{matricula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="2" width="216" height="18" forecolor="#666565" uuid="ec079102-3e21-49d5-a289-9c5e4ce4319b"/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#00.00">
+				<reportElement x="344" y="1" width="66" height="19" forecolor="#666565" uuid="2aee72ec-61c8-4513-9941-d50f9fe1e7a4"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{sum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="2" width="133" height="18" forecolor="#666565" uuid="134f5a39-fdcb-41cb-ab87-6addf0beaa21"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{COLUMN_4}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="553" height="20" uuid="e55c8e74-f6f9-42f3-80a8-4b7e98d32dba"/>
+				<text><![CDATA[Studo Web]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

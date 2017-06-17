@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/sec.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+
+			<!-- PIANEL DE OPÇÕES -->
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Disciplinas" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton icon="fa fa-plus" value="Novo"
+						styleClass="btnNovo" oncomplete="PF('dlgCadastro').show();"
+						actionListener="#{disciplinaController.novo}"
+						update=":formCadastro:painelCadastro">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+			<!-- TABELA -->
+			<p:panel>
+				<p:dataTable id="tabelaDisciplina"
+					emptyMessage="Nenhum registro encontrado" paginator="true"
+					paginatorPosition="bottom" rows="10"
+					value="#{disciplinaController.disciplinas}" var="disciplina">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Descrição" />
+						</f:facet>
+						<h:outputText value="#{disciplina.descricao}" />
+					</p:column>
+
+					<p:column headerText="Ações" style="width: 75px;">
+						<f:facet name="header">
+							<h:outputText value="Ações" />
+						</f:facet>
+						<p:commandButton id="edt" icon="fa fa-edit" title="editar"
+							styleClass="btnEditar"
+							actionListener="#{disciplinaController.getRowEditar}"
+							oncomplete="PF('dlgEditar').show();"
+							update=":formEdicao:painelEditar" />
+						<p:tooltip for="edt" value="Editar" trackMouse="true" />
+
+						<p:commandButton id="del" icon="fa fa-trash" title="excluir"
+							styleClass="btnExcluir"
+							actionListener="#{disciplinaController.getRowExcluir}"
+							oncomplete="PF('dlgExcluir').show();"
+							update=":formExcluir:painelExcluir" />
+						<p:tooltip for="del" value="Excluir" trackMouse="true" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+			<p />
+		</h:form>
+
+		<!-- FORMULARIO DE CADASTRO -->
+		<p:dialog header="Cadastro de Disciplina" widgetVar="dlgCadastro"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" showEffect="clip"
+			hideEffect="explode">
+
+			<h:form id="formCadastro">
+				<h:panelGrid id="painelCadastro" columns="2">
+
+					<p:outputLabel value="Disciplina *" styleClass="fonteNegrito" />
+					<p:inputText size="30" maxlength="45"
+						value="#{disciplinaController.disciplina.descricao}"
+						required="true" requiredMessage="O campo Disciplina é obrigatório">
+					</p:inputText>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Salvar" icon="fa fa-save"
+						styleClass="btnSalvar"
+						actionListener="#{disciplinaController.salvar}"
+						oncomplete="validarCampoInclusao(xhr, status, args)"
+						update=":msn :formLista:tabelaDisciplina :messages" />
+					<p:commandButton value="Cancelar" icon="fa fa-close"
+						styleClass="btnSim" oncomplete="PF('dlgCadastro').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- FORMULARIO DE EDIÇÃO -->
+		<p:dialog widgetVar="dlgEditar" draggable="false" resizable="false"
+			closable="false" modal="true" appendTo="@(body)"
+			header="Editar Disciplina" responsive="true" hideEffect="explode">
+			<h:form id="formEdicao">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel value="Descrição:" styleClass="fonteNegrito" />
+					<p:inputText value="#{disciplinaController.disciplina.descricao}"
+						size="30" maxlength="45" required="true"
+						requiredMessage="O campo 'Disciplina é obrigatório" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Salvar" icon="fa fa-save"
+						styleClass="btnSalvar"
+						actionListener="#{disciplinaController.editar}"
+						oncomplete="validarCampoEdicao(xhr, status, args)"
+						update=":formLista:tabelaDisciplina :msn" />
+					<p:commandButton value="Cancelar" icon="fa fa-close"
+						styleClass="btnSim" oncomplete="PF('dlgEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- FORMULARIO DE EXCLUSÃO -->
+		<p:dialog header="Excluir Disciplina" widgetVar="dlgExcluir"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="fade">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="painelExcluir" columns="2">
+					<h:outputText value="Deseja excluir: " />
+					<h:outputText
+						value="#{disciplinaController.disciplina.descricao} ?" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Sim" icon="ui-icon-trash"
+						styleClass="btnSim"
+						actionListener="#{disciplinaController.excluir}"
+						onclick="PF('dlgExcluir').hide();"
+						update=":msn :formLista:tabelaDisciplina" />
+
+					<p:commandButton value="Não" icon="fa fa-times" styleClass="btnNao"
+						onclick="PF('dlgExcluir').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<script type="text/javascript">
+    function validarCampoInclusao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgCadastro').jq.effect("shake", {times:5}, 100);            
+        }
+        else {
+            PF('dlgCadastro').hide();         
+        }
+    }
+    function validarCampoEdicao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgEditar').jq.effect("shake", {times:5}, 100);            
+        }
+        else {
+            PF('dlgEditar').hide();  
+        
+        }
+    }    
+	</script>
+	</ui:define>
+</ui:composition>

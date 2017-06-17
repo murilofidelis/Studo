@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/pro.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Relatório de Atividade" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Voltar" icon="fa fa-long-arrow-left"
+						styleClass="btnVoltar" outcome="/paginas/pro/atribuicao.xhtml" />
+					<h:commandLink>
+						<p:commandButton value="Exportar" icon="fa fa-file-pdf-o"
+							styleClass="btnSim" />
+						<p:dataExporter type="pdf" encoding="iso-8859-1" target="tabela"
+							fileName="relatorio"
+							preProcessor="#{relatorioController.preProcessPDF}" />
+					</h:commandLink>
+
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+			<p:panel id="painel">
+				<div>
+					<h:outputLabel value="Responder até: " styleClass="fonteNegrito" />
+					<h:outputLabel
+						value="#{relatorioController.atribuicao.date_resposta}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputLabel>
+					<p:spacer width="25" />
+					<h:outputLabel value="Período: " styleClass="fonteNegrito" />
+					<h:outputLabel value="#{relatorioController.turma.periodo}" />
+					<p:spacer width="25" />
+					<h:outputLabel value="Seríe/Turma: " styleClass="fonteNegrito" />
+					<h:outputLabel
+						value="#{relatorioController.turma.serie} - #{relatorioController.turma.turma}" />
+					<p:spacer width="25" />
+					<h:outputLabel value="Quantidade de Questões: "
+						style="font-weight:bold" />
+					<h:outputLabel value="#{relatorioController.qtdQuestoes}" />
+					<p:spacer width="25" />
+					<h:outputLabel value="Valor: " styleClass="fonteNegrito" />
+					<h:outputLabel value="#{relatorioController.atribuicao.valor}" />
+				</div>
+				<p />
+				<div>
+					<h:outputLabel value="Atividade: " style="font-weight:bold" />
+					<h:outputLabel value="#{relatorioController.atividade.titulo}" />
+				</div>
+			</p:panel>
+			<p />
+			<!-- TABELA DE ALUNOS -->
+			<p:panel>
+				<p:dataTable id="tabela"
+					emptyMessage="Nenhum aluno respondeu esta atividade"
+					paginator="true" paginatorPosition="bottom" rows="10"
+					value="#{relatorioController.relatorios}" var="rlt">
+					<p:column headerText="Matrícula" style="width:145px">
+						<h:outputText value="#{rlt.matricula}" />
+					</p:column>
+					<p:column headerText="Aluno" sortBy="#{rlt.nome}">
+						<h:outputText value="#{rlt.nome}" />
+					</p:column>
+					<p:column headerText="Nota" sortBy="#{rlt.nota}"
+						style="width:100px;text-align: center;">
+						<h:outputText value="#{rlt.nota}">
+							<f:convertNumber locale="en_US" maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Qtd. Acertos" sortBy="#{rlt.qtd}"
+						style="width:115px; text-align: center;">
+						<h:outputText value="#{rlt.qtd}" />
+					</p:column>
+					<p:column headerText="Ações" style="width:40px" exportable="false">
+						<p:commandButton id="visu" icon="fa fa-eye"
+							styleClass="btnVisualizar"
+							oncomplete="PF('dlgVisualizar').show();"
+							actionListener="#{relatorioController.carreagrDetalhes}"
+							update=":formVisualizar" />
+						<p:tooltip for="visu" value="Visualizar detalhes"
+							trackMouse="true" />
+					</p:column>
+				</p:dataTable>
+
+			</p:panel>
+		</h:form>
+		<!-- DETALHAR-->
+		<p:dialog header="Detalhes da Atividade" widgetVar="dlgVisualizar"
+			draggable="true" resizable="false" modal="true" appendTo="@(body)"
+			maximizable="true" responsive="true" hideEffect="explode">
+			<h:form id="formVisualizar">
+
+				<h:outputLabel value="Matrícula: " styleClass="fonteNegrito" />
+				<h:outputLabel value="#{relatorioController.relatorio.matricula}" />
+				<p:spacer width="25" />
+				<h:outputLabel value="Nome: " styleClass="fonteNegrito" />
+				<h:outputLabel value="#{relatorioController.relatorio.nome}" />
+				<p:spacer width="25" />
+				<h:outputLabel value="Nota: " styleClass="fonteNegrito" />
+				<h:outputLabel value="#{relatorioController.relatorio.nota}">
+					<f:convertNumber locale="en_US" maxFractionDigits="2" />
+				</h:outputLabel>
+				<p:spacer width="25" />
+				<h:outputLabel value="Quantidade de acertos: "
+					style="font-weight:bold" />
+				<h:outputLabel value="#{relatorioController.relatorio.qtd}" />
+				<p />
+				<p:dataTable style="width: 1100px;"
+					emptyMessage="Nenhum registro encontrado" paginator="true"
+					paginatorPosition="bottom" rows="10"
+					value="#{relatorioController.relatorioDetalhe}" var="relatorio">
+					<p:column headerText="Número"
+						style="width:1px; text-align: center;">
+						<h:outputText value="#{relatorio.numero}"
+							style="text-align: center;" />
+					</p:column>
+					<p:column headerText="Descrição" style="width: 170px;">
+						<h:outputText value="#{relatorio.decricaoQuestao}" />
+					</p:column>
+					<p:column headerText="Resposta correta"
+						style="width:6px;text-align: center;">
+						<h:outputText value="#{relatorio.altCorreta}" />
+					</p:column>
+					<p:column headerText="Resposta escolhida"
+						style="width:6px; text-align: center;">
+						<h:outputText value="#{relatorio.altEscolhida}" />
+					</p:column>
+					<p:column headerText="Resposta"
+						style="width:4px;text-align: center;">
+						<h:graphicImage library="studo"
+							name="img/#{relatorio.verificarAcerto()}.png" style="border:0," />
+					</p:column>
+					<p:column headerText="Data da resposta" style="width:6px;">
+						<h:outputText value="#{relatorio.dataResposta}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

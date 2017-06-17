@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/sec.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<!-- PIANEL DE OPÇÕES -->
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Turma" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton icon="fa fa-plus" value="Novo"
+						styleClass="btnNovo" actionListener="#{turmaController.novo}"
+						oncomplete="PF('dlgCadastro').show();"
+						update=":formCadastro:painelCadastro :formCadastro:painelCadastro">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+			<!-- FILTRO DE PESQUISA -->
+			<p:fieldset style="margin-bottom:20px">
+				<h:panelGrid columns="3">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Ano " styleClass="fonteNegrito" />
+						<p:inputText value="#{turmaController.ano}">
+							<p:ajax event="keyup" update="periodo"
+								listener="#{turmaController.habilitar}" />
+							<p:keyFilter regEx="/[0-9]/i" />
+						</p:inputText>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Período " styleClass="fonteNegrito" />
+						<p:selectOneMenu id="periodo" value="#{turmaController.periodo}"
+							disabled="#{turmaController.camp}" effect="fold">
+
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+							<f:selectItem itemLabel="Matutino" itemValue="Matutino" />
+							<f:selectItem itemLabel="Vespertino" itemValue="Vespertino" />
+							<f:selectItem itemLabel="Noturno" itemValue="Noturno" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<p:commandButton icon="fa fa-search" value="Buscar"
+						styleClass="btnBuscar"
+						actionListener="#{turmaController.buscarPorAnoPeriodo}"
+						update=":msn :formLista:tabela " />
+				</h:panelGrid>
+			</p:fieldset>
+
+			<p />
+			<!-- TABELA -->
+			<p:panel>
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado"
+					paginator="true" paginatorPosition="bottom" rows="10"
+					value="#{turmaController.turmas}" var="turma">
+
+					<p:column headerText="Cod. Turma">
+						<h:outputText value="#{turma.cod_turma}" />
+					</p:column>
+
+					<p:column headerText="Ano">
+						<h:outputText value="#{turma.ano}" />
+					</p:column>
+
+					<p:column headerText="Período" sortBy="#{turma.periodo}">
+						<h:outputText value="#{turma.periodo}" />
+					</p:column>
+
+					<p:column headerText="Série" sortBy="#{turma.serie}">
+						<h:outputText value="#{turma.serie}" />
+					</p:column>
+					<p:column headerText="Turma">
+						<h:outputText value="#{turma.turma}" />
+					</p:column>
+
+					<p:column headerText="Sala">
+						<h:outputText value="#{turma.sala}" />
+					</p:column>
+
+					<p:column headerText="Ações" style="width:80px">
+						<p:commandButton id="edt" icon="fa fa-edit" title="editar"
+							styleClass="btnEditar"
+							actionListener="#{turmaController.getRowEdit}"
+							oncomplete="PF('dlgEdicao').show();"
+							update=":formEdicao:painelEdicao">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<p:tooltip for="edt" value="Editar" trackMouse="true" />
+
+						<p:commandButton id="del" icon="fa fa-trash" title="excluir"
+							styleClass="btnExcluir"
+							actionListener="#{turmaController.getRowDelet}"
+							oncomplete="PF('dlgExcluir').show();"
+							update=":formExcluir:painelExcluir" />
+						<p:tooltip for="del" value="Excluir" trackMouse="true" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+		<!-- FORMULARIO DE CADASTRO -->
+		<p:dialog header="Cadastro de Turma" widgetVar="dlgCadastro"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" showEffect="clip"
+			hideEffect="explode">
+			<h:form id="formCadastro">
+
+				<h:panelGrid id="painelCadastro" columns="1">
+					<h:panelGrid columns="4">
+						<p:outputLabel value="Período *" styleClass="fonteNegrito" />
+						<p:selectOneMenu value="#{turmaController.turma.periodo}"
+							converter="omnifaces.SelectItemsConverter" required="true"
+							requiredMessage="O campo Período é obrigatório" effect="fold">
+
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+							<f:selectItem itemLabel="Matutino" itemValue="Matutino" />
+							<f:selectItem itemLabel="Vespertino" itemValue="Vespertino" />
+							<f:selectItem itemLabel="Noturno" itemValue="Noturno" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Ano *" styleClass="fonteNegrito" />
+						<p:inputText value="#{turmaController.turma.ano}" disabled="true" />
+						<p:outputLabel value="Série *" styleClass="fonteNegrito" />
+						<p:selectOneMenu value="#{turmaController.turma.serie}"
+							converter="omnifaces.SelectItemsConverter" required="true"
+							requiredMessage="O campo Seríe é obrigatório" effect="fold">
+
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+							<f:selectItem itemLabel="4º Série" itemValue="4º Série" />
+							<f:selectItem itemLabel="5º Série" itemValue="5º Série" />
+							<f:selectItem itemLabel="6º Série" itemValue="6º Série" />
+							<f:selectItem itemLabel="7º Série" itemValue="7º Série" />
+							<f:selectItem itemLabel="8º Série" itemValue="8º Série" />
+							<f:selectItem itemLabel="9º Série" itemValue="9º Série" />
+							<f:selectItem itemLabel="1º ano" itemValue="1º ano" />
+							<f:selectItem itemLabel="2º ano" itemValue="2º ano" />
+							<f:selectItem itemLabel="3º ano" itemValue="3º ano" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Turma *" styleClass="fonteNegrito" />
+						<p:inputText size="10" maxlength="1"
+							value="#{turmaController.turma.turma}" placeholder="Ex: A"
+							required="true" requiredMessage="O campo Turma é obrigatório">
+							<p:keyFilter regEx="/[A-Z]/i" />
+						</p:inputText>
+						<p:outputLabel value="Sala" styleClass="fonteNegrito" />
+						<p:inputText size="10" maxlength="5"
+							value="#{turmaController.turma.sala}" placeholder="Ex: sala 2"
+							converterMessage="O valor informado é inválido">
+							<f:convertNumber integerOnly="true" />
+							<p:keyFilter regEx="/[0-9]/i" />
+						</p:inputText>
+					</h:panelGrid>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Salvar" icon="fa fa-save"
+						styleClass="btnSalvar" actionListener="#{turmaController.salvar}"
+						oncomplete="validarCampoInclusao(xhr, status, args)"
+						update=":msn :formLista:tabela" />
+					<p:commandButton value="Cancelar" icon="fa fa-close"
+						styleClass="btnSim" oncomplete="PF('dlgCadastro').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- FORMULARIO DE EDIÇÃO-->
+		<p:dialog header="Editar Turma" widgetVar="dlgEdicao" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			responsive="true" hideEffect="explode">
+			<h:form id="formEdicao">
+
+				<h:panelGrid id="painelEdicao" columns="1">
+					<h:panelGrid columns="4">
+
+						<p:outputLabel value="Período *" styleClass="fonteNegrito" />
+						<p:selectOneMenu value="#{turmaController.turma.periodo}"
+							converter="omnifaces.SelectItemsConverter" required="true"
+							requiredMessage="O campo Período é obrigatório" effect="fold">
+
+							<f:selectItem noSelectionOption="true"
+								itemLabel="Selecione um período" />
+
+							<f:selectItem itemLabel="Matutino" itemValue="Matutino" />
+							<f:selectItem itemLabel="Vespertino" itemValue="Vespertino" />
+							<f:selectItem itemLabel="Noturno" itemValue="Noturno" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Ano *" styleClass="fonteNegrito" />
+						<p:outputLabel value="#{turmaController.turma.ano}" />
+
+						<p:outputLabel value="Série *" styleClass="fonteNegrito" />
+						<p:selectOneMenu value="#{turmaController.turma.serie}"
+							converter="omnifaces.SelectItemsConverter" required="true"
+							requiredMessage="O campo Série é obrigatório" effect="fold">
+
+							<f:selectItem noSelectionOption="true"
+								itemLabel="Selecione uma série" />
+
+							<f:selectItem itemLabel="4º Série" itemValue="4º Série" />
+							<f:selectItem itemLabel="5º Série" itemValue="5º Série" />
+							<f:selectItem itemLabel="6º Série" itemValue="6º Série" />
+							<f:selectItem itemLabel="7º Série" itemValue="7º Série" />
+							<f:selectItem itemLabel="8º Série" itemValue="8º Série" />
+							<f:selectItem itemLabel="9º Série" itemValue="9º Série" />
+							<f:selectItem itemLabel="1º ano" itemValue="1º ano" />
+							<f:selectItem itemLabel="2º ano" itemValue="2º ano" />
+							<f:selectItem itemLabel="3º ano" itemValue="3º ano" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Turma *" styleClass="fonteNegrito" />
+						<p:inputText size="10" maxlength="1"
+							value="#{turmaController.turma.turma}" placeholder="Ex: A"
+							required="true" requiredMessage="O campo Turma é obrigatório">
+							<p:keyFilter regEx="/[A-Z]/i" />
+						</p:inputText>
+
+						<p:outputLabel value="Sala" styleClass="fonteNegrito" />
+						<p:inputText size="10" maxlength="6"
+							value="#{turmaController.turma.sala}" placeholder="Ex: sala 2"
+							converterMessage="O valor informado é inválido">
+							<f:convertNumber integerOnly="true" />
+							<p:keyFilter regEx="/[0-9]/i" />
+						</p:inputText>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Salvar" icon="fa fa-save"
+						styleClass="btnSalvar" actionListener="#{turmaController.editar}"
+						oncomplete="validarCampoEdicao(xhr, status, args)"
+						update=":msn :formLista:tabela" />
+					<p:commandButton value="Cancelar" icon="fa fa-close"
+						styleClass="btnSim" oncomplete="PF('dlgEdicao').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+		<!-- FORMULARIO DE EXCLUSÃO -->
+		<p:dialog header="Excluir Turma" widgetVar="dlgExcluir"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="fade">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="painelExcluir" columns="2">
+					<h:outputText value="Deseja realmente excluir essa turma ? " />
+					<h:outputText
+						value="#{turmaController.turma.serie} - #{turmaController.turma.turma} - #{turmaController.turma.periodo} "
+						styleClass="fonteNegrito" />
+					<h:outputText
+						value=" Todo o histórico de alunos e atividades serão excluídos!" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Sim" icon="ui-icon-trash"
+						styleClass="btnSim" actionListener="#{turmaController.excluir}"
+						onclick="PF('dlgExcluir').hide();" update=":msn :formLista:tabela" />
+
+					<p:commandButton value="Não" icon="fa fa-times" styleClass="btnNao"
+						onclick="PF('dlgExcluir').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<script type="text/javascript">
+    function validarCampoInclusao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgCadastro').jq.effect("shake", {times:5}, 100);            
+        }       
+        
+    }
+    function validarCampoEdicao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgEdicao').jq.effect("shake", {times:5}, 100);            
+        }       
+    }    
+   
+	</script>
+	</ui:define>
+</ui:composition>

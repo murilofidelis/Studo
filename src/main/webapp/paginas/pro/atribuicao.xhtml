@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/pro.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:outputScript library="studo" name="js/script_calendario.js" />
+		<h:form id="formLista">
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Atribuir Atividade" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:button value="Voltar" icon="fa fa-long-arrow-left"
+						styleClass="btnVoltar" outcome="/paginas/pro/atividade.xhtml" />
+
+					<p:commandButton value="Nova Atribuição" icon="fa fa-share"
+						styleClass="btnNovo" oncomplete="PF('dlg').show();"
+						actionListener="#{atribuicaoController.novo}"
+						update=":formAtribuicao:painel1 :formAtribuicao:painel2">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+			<p:panel>
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Disciplina: " styleClass="fonteNegrito" />
+					<h:outputLabel
+						value="#{atribuicaoController.atividade.disciplina.descricao}" />
+				</h:panelGrid>
+				<h:outputLabel value="Atividade: " styleClass="fonteNegrito" />
+				<h:outputLabel value="#{atribuicaoController.atividade.titulo}" />
+			</p:panel>
+			<p />
+			<!-- TABELA DE ATIVIDADES -->
+			<h4>Turmas</h4>
+			<p:panel>
+				<p:dataTable id="tabela"
+					emptyMessage="Está atividade ainda não foi atribuída a uma turma."
+					paginator="true" paginatorPosition="bottom" rows="10"
+					value="#{atribuicaoController.atribuicoes}" var="at">
+
+					<p:column headerText="Cód. Turma" style="width:100px">
+						<h:outputText value="#{at.turma.cod_turma}" />
+					</p:column>
+					<p:column headerText="Período" sortBy="#{at.turma.periodo}">
+						<h:outputText value="#{at.turma.periodo}" />
+					</p:column>
+					<p:column headerText="Série" sortBy="#{at.turma.serie}">
+						<h:outputText value="#{at.turma.serie}" />
+					</p:column>
+					<p:column headerText="Turma">
+						<h:outputText value="#{at.turma.turma}" />
+					</p:column>
+					<p:column headerText="Responder até" sortBy="#{at.date_resposta}">
+						<h:outputText value="#{at.date_resposta}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Valor (pontos)">
+						<h:outputText value="#{at.valor}" />
+					</p:column>
+					<p:column headerText="Situação" sortBy="#{at.formatarSituacao()}">
+						<h:outputText value="#{at.formatarSituacao()}" />
+					</p:column>
+					<p:column headerText="Ações" style="width:115px">
+						<p:commandButton id="rlt" icon="fa fa-file-text"
+							styleClass="btnVisualizar"
+							actionListener="#{atribuicaoController.trasferir}" />
+						<p:tooltip for="rlt" value="Relatório da atividade"
+							trackMouse="true" />
+
+						<p:commandButton id="edt" icon="fa fa-edit" styleClass="btnEditar"
+							oncomplete="PF('dlgEdicao').show();"
+							actionListener="#{atribuicaoController.getRowEdit}"
+							update=":formEdicao:painel3">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<p:tooltip for="edt" value="Editar" trackMouse="true" />
+
+						<p:commandButton id="del" icon="fa fa-trash"
+							styleClass="btnExcluir" oncomplete="PF('dlgExcluir').show();"
+							actionListener="#{atribuicaoController.getRowDel}" />
+						<p:tooltip for="del" value="Excluir" trackMouse="true" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+		<!--CADASTRO - ATRIBUIR ATIVIDADE -->
+		<p:dialog header="Atribuir Atividade" widgetVar="dlg" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			responsive="true" showEffect="clip" hideEffect="explode">
+			<h:form id="formAtribuicao">
+				<h:panelGrid id="painel1" columns="6">
+
+					<p:outputLabel value="Periodo *" styleClass="fonteNegrito" />
+					<p:selectOneMenu required="true"
+						requiredMessage="O campo Periodo é obrigatório" effect="fold"
+						value="#{atribuicaoController.periodo}">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+						<f:selectItem itemLabel="Matutino" itemValue="Matutino" />
+						<f:selectItem itemLabel="Vespertino" itemValue="Vespertino" />
+						<f:selectItem itemLabel="Noturno" itemValue="Noturno" />
+						<!-- EVENTO: atualiza a lista de seríes -->
+						<p:ajax event="valueChange" update=":formAtribuicao:painel1"
+							listener="#{atribuicaoController.carregarSeries}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Seríe *" styleClass="fonteNegrito" />
+					<p:selectOneMenu required="true"
+						value="#{atribuicaoController.serie}"
+						requiredMessage="O campo Série é obrigatório" effect="fold">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+						<f:selectItems value="#{atribuicaoController.series}" var="serie"
+							itemValue="#{serie}" itemLabel="#{serie}" />
+						<!-- EVENTO: atualiza a lista de seríes -->
+						<p:ajax event="valueChange" update=":formAtribuicao:painel1"
+							listener="#{atribuicaoController.carregarTurmas}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Turma *" styleClass="fonteNegrito" />
+					<p:selectOneMenu required="true"
+						value="#{atribuicaoController.atribuicao.cod_turma}"
+						requiredMessage="O campo Turma é obrigatório" effect="fold">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+						<f:selectItems value="#{atribuicaoController.tumas}" var="turma"
+							itemValue="#{turma.cod_turma}" itemLabel="#{turma.turma}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p />
+				<h:panelGrid id="painel2" columns="5">
+					<p:outputLabel value="Valor *" styleClass="fonteNegrito" />
+					<p:inputText value="#{atribuicaoController.atribuicao.valor}"
+						size="3" required="true"
+						requiredMessage="O campo Valor é obrigatório" maxlength="5">
+						<p:keyFilter regEx="/[0-9.]/i" />
+					</p:inputText>
+
+					<p:outputLabel value="Responder até *" styleClass="fonteNegrito" />
+					<p:calendar effect="fold" pattern="dd/MM/yyyy" size="9"
+						value="#{atribuicaoController.dataReposta}" required="true"
+						requiredMessage="O campo Resposta até é obrigatório"
+						converterMessage="Data inválida" maxlength="10"
+						mindate="#{atribuicaoController.dtMinima}">
+					</p:calendar>
+				</h:panelGrid>
+				<p />
+				<h:panelGrid columns="2" style="float:right">
+					<p:commandButton value="Salvar" icon="fa fa-save"
+						styleClass="btnSalvar"
+						actionListener="#{atribuicaoController.salvar}"
+						update=":msn :formLista:tabela" />
+					<p:commandButton value="Cancelar" icon="fa fa-close"
+						styleClass="btnSim" oncomplete="PF('dlg').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- EDITAR ATRIBUÇÃO -->
+		<p:dialog header="Editar Atribuição" widgetVar="dlgEdicao"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="explode">
+			<h:form id="formEdicao">
+				<h:panelGrid id="painel3" columns="2">
+					<h:panelGrid columns="8">
+						<h:outputLabel value="Periodo: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atribuicaoController.atribuicao.turma.periodo}" />
+						<p:spacer height="10" />
+						<h:outputLabel value="Seríe: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atribuicaoController.atribuicao.turma.serie}" />
+						<p:spacer height="10" />
+						<h:outputLabel value="Turma: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atribuicaoController.atribuicao.turma.turma}" />
+					</h:panelGrid>
+					<p />
+					<h:panelGrid columns="8">
+						<p:outputLabel value="Valor *" styleClass="fonteNegrito" />
+						<p:inputText value="#{atribuicaoController.atribuicao.valor}"
+							disabled="true">
+
+						</p:inputText>
+						<p:spacer height="10" />
+						<p:outputLabel value="Responder até *" styleClass="fonteNegrito" />
+						<p:calendar effect="fold" pattern="dd/MM/yyyy" size="9"
+							value="#{atribuicaoController.dataReposta}" required="true"
+							requiredMessage="O campo Resposta até é obrigatório"
+							converterMessage="Data inválida" maxlength="10"
+							mindate="#{atribuicaoController.dtMinima}">
+						</p:calendar>
+
+						<p:spacer height="10" />
+						<p:outputLabel value="Encerrar Atividade "
+							styleClass="fonteNegrito" />
+						<p:selectBooleanCheckbox
+							value="#{atribuicaoController.atribuicao.situacao}" />
+					</h:panelGrid>
+
+					<p />
+					<h:panelGrid columns="2" style="float:right">
+						<p:commandButton value="Salvar" icon="fa fa-save"
+							styleClass="btnSalvar"
+							actionListener="#{atribuicaoController.editar}"
+							update=":msn :formLista:tabela" />
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btnSim" oncomplete="PF('dlgEdicao').hide();" />
+					</h:panelGrid>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- FORMULARIO DE EXCLUSÃO DA ATIVIDADE -->
+		<p:dialog header="Excluir Atribuição" widgetVar="dlgExcluir"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="fade">
+			<h:form>
+				<h:panelGrid columns="2">
+					<h:outputText
+						value="Deseja remover a atividade desta turma? As respostas dos alunos para atividades serão excluídas." />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Sim" icon="ui-icon-trash"
+						styleClass="btnSim"
+						actionListener="#{atribuicaoController.excluir}"
+						onclick="PF('dlgExcluir').hide();" update=":msn :formLista:tabela" />
+
+					<p:commandButton value="Não" icon="fa fa-times" styleClass="btnNao"
+						onclick="PF('dlgExcluir').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

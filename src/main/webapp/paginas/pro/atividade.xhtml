@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/pro.xhtml">
+
+	<h:head>
+		<title>Studo</title>
+		<h:outputStylesheet library="studo" name="styles/estilo.css" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<h:outputScript library="studo" name="js/script_calendario.js" />
+		<h:form id="formLista">
+			<!-- PIANEL DE OPÇÕES -->
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:outputLabel value="Minhas Atividades" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton icon="fa fa-plus" value="Nova Atividade"
+						styleClass="btnNovo" actionListener="#{atividadeController.novo}"
+						oncomplete="PF('dlgCadastro').show();" update=":formCadastro :msn">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+			<p />
+
+			<!-- FILTRO DE PESQUISA -->
+			<p:panel>
+				<h:panelGrid columns="5" style="margin-bottom:10px" cellpadding="5">
+					<p:outputLabel value="Período de: " styleClass="fonteNegrito" />
+					<p:calendar value="#{atividadeController.de}" effect="fold"
+						converterMessage="Data inválida" pattern="dd/MM/yyyy" size="10"
+						maxlength="10">
+					</p:calendar>
+
+					<p:outputLabel value="até: " styleClass="fonteNegrito" />
+					<p:calendar value="#{atividadeController.ate}" effect="fold"
+						converterMessage="Data inválida" pattern="dd/MM/yyyy" size="10"
+						maxlength="10">
+					</p:calendar>
+
+					<p:commandButton icon="fa fa-search" value="Buscar"
+						styleClass="btnBuscar"
+						actionListener="#{atividadeController.buscar}"
+						update=":msn :formLista:tabela" style="margin-left:10px" />
+				</h:panelGrid>
+			</p:panel>
+			<!-- TABELA DE ATIVIDADES -->
+			<p />
+
+			<p:panel>
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado"
+					paginator="true" paginatorPosition="bottom" rows="10"
+					value="#{atividadeController.atividades}" var="atividade">
+
+					<p:column headerText="Título"
+						style="white-space:normal !important;">
+						<h:outputText value="#{atividade.titulo}" />
+					</p:column>
+					<p:column headerText="Disciplina" style="width:130px">
+						<h:outputText value="#{atividade.disciplina.descricao}" />
+					</p:column>
+
+					<p:column headerText="Ações" style="width:185px">
+						<p:commandButton id="visu" icon="fa fa-eye"
+							styleClass="btnVisualizar"
+							oncomplete="PF('dlgVisualizar').show();"
+							actionListener="#{atividadeController.getRowEdit}"
+							update=":formVisualizar" />
+						<p:tooltip for="visu" value="Visualizar" trackMouse="true" />
+
+						<p:commandButton id="qt" icon="fa fa-question"
+							styleClass="btnQuestao"
+							actionListener="#{atividadeController.listarQuestoes}" />
+						<p:tooltip for="qt" value="Questões" trackMouse="true" />
+
+						<p:commandButton id="atribui" icon="fa fa-share"
+							styleClass="btnAtribuir"
+							actionListener="#{atividadeController.atribuirAtividade}" />
+						<p:tooltip for="atribui" value="Atribuir Atividade"
+							trackMouse="true" />
+
+						<p:commandButton id="edt" icon="fa fa-edit" styleClass="btnEditar"
+							actionListener="#{atividadeController.getRowEdit}"
+							oncomplete="PF('dlgEdicao').show();" update=":formEdicao">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<p:tooltip for="edt" value="Editar" trackMouse="true" />
+
+						<p:commandButton id="del" icon="fa fa-trash"
+							styleClass="btnExcluir"
+							oncomplete="PF('dlgExcluirAtividade').show();"
+							actionListener="#{atividadeController.getRowDelete}" />
+						<p:tooltip for="del" value="Excluir" trackMouse="true" />
+
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+		</h:form>
+
+		<!-- CADASTRO DE ATIVIDADE -->
+		<p:dialog header="Nova Atividade" widgetVar="dlgCadastro"
+			closable="false" draggable="true" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" showEffect="clip"
+			hideEffect="explode">
+			<h:form id="formCadastro">
+				<h:panelGrid columns="6">
+					<p:outputLabel value="Disciplina *" styleClass="fonteNegrito" />
+					<p:selectOneMenu required="true"
+						value="#{atividadeController.atividade.disciplina.cod_disciplina}"
+						requiredMessage="O campo Disciplina é obrigatório" effect="fold">
+
+						<f:selectItems value="#{atividadeController.comboDisciplinas}"
+							var="disciplina" itemValue="#{disciplina.cod_disciplina}"
+							itemLabel="#{disciplina.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Classificar por série"
+						styleClass="fonteNegrito" />
+					<p:selectOneMenu
+						value="#{atividadeController.atividade.classificacao}"
+						converter="omnifaces.SelectItemsConverter" effect="fold">
+
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+						<f:selectItem itemLabel="4º Série" itemValue="4º Série" />
+						<f:selectItem itemLabel="5º Série" itemValue="5º Série" />
+						<f:selectItem itemLabel="6º Série" itemValue="6º Série" />
+						<f:selectItem itemLabel="7º Série" itemValue="7º Série" />
+						<f:selectItem itemLabel="8º Série" itemValue="8º Série" />
+						<f:selectItem itemLabel="9º Série" itemValue="9º Série" />
+						<f:selectItem itemLabel="1º ano" itemValue="1º ano" />
+						<f:selectItem itemLabel="2º ano" itemValue="2º ano" />
+						<f:selectItem itemLabel="3º ano" itemValue="3º ano" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Título *" styleClass="fonteNegrito" />
+					<p:inputTextarea value="#{atividadeController.atividade.titulo}"
+						maxlength="250" rows="1" cols="72" required="true"
+						requiredMessage="O campo Título é obrigatório" />
+
+					<p:outputLabel value="Descrição" styleClass="fonteNegrito" />
+					<p:inputTextarea value="#{atividadeController.atividade.descricao}"
+						maxlength="1024" rows="4" cols="72" counterTemplate="{0}"
+						counter="cont"></p:inputTextarea>
+
+				</h:panelGrid>
+				<h:outputText id="cont" style="margin-left:500px" />
+				<p />
+
+				<div>
+					<h:panelGrid columns="2" style="float:right">
+						<p:commandButton value="Salvar" icon="fa fa-save"
+							styleClass="btnSalvar"
+							actionListener="#{atividadeController.salvar}"
+							oncomplete="validarCampoInclusao(xhr, status, args)"
+							update=":msn :formLista:tabela" />
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btnSim" oncomplete="PF('dlgCadastro').hide();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<!-- EDITAR ATIVIDADE -->
+		<p:dialog header="Editar Atividade" widgetVar="dlgEdicao"
+			closable="false" draggable="true" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="explode">
+			<h:form id="formEdicao">
+				<h:panelGrid columns="6">
+					<p:outputLabel value="Disciplina *" styleClass="fonteNegrito" />
+					<p:selectOneMenu required="true"
+						value="#{atividadeController.atividade.disciplina.cod_disciplina}"
+						requiredMessage="O campo Disciplina é obrigatório" effect="fold">
+
+						<f:selectItems value="#{atividadeController.comboDisciplinas}"
+							var="disciplina" itemValue="#{disciplina.cod_disciplina}"
+							itemLabel="#{disciplina.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Classificar por série"
+						styleClass="fonteNegrito" />
+					<p:selectOneMenu
+						value="#{atividadeController.atividade.classificacao}"
+						converter="omnifaces.SelectItemsConverter" effect="fold">
+
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+
+						<f:selectItem itemLabel="4º Série" itemValue="4º Série" />
+						<f:selectItem itemLabel="5º Série" itemValue="5º Série" />
+						<f:selectItem itemLabel="6º Série" itemValue="6º Série" />
+						<f:selectItem itemLabel="7º Série" itemValue="7º Série" />
+						<f:selectItem itemLabel="8º Série" itemValue="8º Série" />
+						<f:selectItem itemLabel="9º Série" itemValue="9º Série" />
+						<f:selectItem itemLabel="1º ano" itemValue="1º ano" />
+						<f:selectItem itemLabel="2º ano" itemValue="2º ano" />
+						<f:selectItem itemLabel="3º ano" itemValue="3º ano" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:outputLabel value="Título *" styleClass="fonteNegrito" />
+					<p:inputTextarea value="#{atividadeController.atividade.titulo}"
+						maxlength="250" rows="1" cols="72" required="true"
+						requiredMessage="O campo Título é obrigatório" />
+
+					<p:outputLabel value="Descrição" styleClass="fonteNegrito" />
+					<p:inputTextarea value="#{atividadeController.atividade.descricao}"
+						maxlength="1024" rows="4" cols="72" counterTemplate="{0}"
+						counter="cont"></p:inputTextarea>
+
+				</h:panelGrid>
+				<div>
+					<h:outputText id="cont" style="margin-left:500px" />
+				</div>
+				<p />
+				<div style="float: right;">
+					<h:panelGrid columns="2">
+						<p:commandButton value="Salvar" icon="fa fa-save"
+							actionListener="#{atividadeController.editar}"
+							styleClass="btnSalvar" style="float: right;"
+							oncomplete="validarCampoEdicao(xhr, status, args)"
+							update=":msn :formLista:tabela" />
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btnSim" oncomplete="PF('dlgEdicao').hide();" />
+					</h:panelGrid>
+				</div>
+			</h:form>
+		</p:dialog>
+
+		<!-- VISUALIZAÇÃO -->
+		<p:dialog header="Visualizar" widgetVar="dlgVisualizar"
+			draggable="true" resizable="false" modal="true" appendTo="@(body)"
+			hideEffect="explode">
+			<h:form id="formVisualizar">
+				<p:panel style="width: 600px;">
+					<h:panelGrid columns="6">
+						<h:outputLabel value="Disciplina: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atividadeController.atividade.disciplina.descricao}" />
+
+						<h:outputLabel value="Criada em: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atividadeController.atividade.data_criacao}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputLabel>
+
+						<h:outputLabel value="Classificação: " styleClass="fonteNegrito" />
+						<h:outputLabel
+							value="#{atividadeController.atividade.classificacao}" />
+					</h:panelGrid>
+					<p />
+					<div>
+						<h:outputLabel value="Título: " styleClass="fonteNegrito" />
+						<h:outputLabel value="#{atividadeController.atividade.titulo}" />
+					</div>
+					<p />
+					<div>
+						<h:outputLabel value="Descrição: " styleClass="fonteNegrito" />
+						<h:outputLabel value="#{atividadeController.atividade.descricao}" />
+					</div>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+		<!-- FORMULARIO DE EXCLUSÃO DA ATIVIDADE -->
+		<p:dialog header="Excluir Atividade" widgetVar="dlgExcluirAtividade"
+			closable="false" draggable="false" resizable="false" modal="true"
+			appendTo="@(body)" responsive="true" hideEffect="fade">
+			<h:form>
+				<h:panelGrid columns="2">
+					<h:outputText value="Deseja excluir essa atividade?" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float: right;">
+					<p:commandButton value="Sim" icon="ui-icon-trash"
+						styleClass="btnSim"
+						actionListener="#{atividadeController.excluir}"
+						onclick="PF('dlgExcluirAtividade').hide();"
+						update=":msn :formLista:tabela" />
+
+					<p:commandButton value="Não" icon="fa fa-times" styleClass="btnNao"
+						onclick="PF('dlgExcluirAtividade').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+
+		<script type="text/javascript">
+    function validarCampoInclusao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgCadastro').jq.effect("shake", {times:5}, 100);            
+        }
+        else {
+            PF('dlgCadastro').hide();         
+        }
+    }
+
+    function validarCampoEdicao(xhr, status, args) {
+        if(args.validationFailed) {
+            PF('dlgEdicao').jq.effect("shake", {times:5}, 100);            
+        }
+        else {
+            PF('dlgEdicao').hide();         
+        }
+    }
+	</script>
+	</ui:define>
+
+</ui:composition>
