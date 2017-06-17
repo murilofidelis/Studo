@@ -3,11 +3,11 @@ Sistema de Integração aluno professor - java+JSF+JDBC
 
 Sistema: https://studoweb.herokuapp.com/
 
-Usuário secretária/ADM
+Usuário secretária:
 Usuário: ADM
 Senha: ADM
 
-Usuário Professor Teste
+Usuário Professor Teste:
 Usuário: teste
 Senha: teste
 
