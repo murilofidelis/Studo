@@ -96,12 +96,20 @@
 			<version>1.11</version>
 		</dependency>
 
-		<!-- PostGreSQL -->
+		<!-- PostGreSQL 
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.3-1100-jdbc41</version>
+		</dependency>-->
+
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4.1212</version>
 		</dependency>
+
 
 		<!-- JasperReports -->
 		<dependency>

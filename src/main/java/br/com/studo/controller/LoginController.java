@@ -37,7 +37,7 @@ public class LoginController {
 				Faces.redirect("./paginas/pro/atividade.xhtml");
 			}
 		} catch (Exception e) {
-			Messages.addGlobalError("Erro ao autenticar");
+			Messages.addGlobalError("Erro ao autenticar "+ e.getMessage());
 			e.printStackTrace();
 		}
 	}
