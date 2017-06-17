@@ -16,7 +16,7 @@ public class Conexao {
 	private static final String SENHA = "123456";*/
 	
 	
-	private static final String URL_CONEXAO = "jdbc:postgres://uhfnnqaklyktqt:f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e@ec2-54-197-232-155.compute-1.amazonaws.com:5432/d61lt994e6cods";
+	private static final String URL_CONEXAO = "jdbc:postgresql://uhfnnqaklyktqt:f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e@ec2-54-197-232-155.compute-1.amazonaws.com:5432/d61lt994e6cods";
 	private static final String USUARIO = "uhfnnqaklyktqt";
 	private static final String SENHA = "f4199fc1f00b17cee937d0169efe1670182ba1b626e4e42994d7b2281af6271e";
 
