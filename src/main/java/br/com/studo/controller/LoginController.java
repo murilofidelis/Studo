@@ -1,7 +1,6 @@
 package br.com.studo.controller;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.faces.bean.ManagedBean;
@@ -15,7 +14,6 @@ import br.com.studo.dao.DisciplinaDAO;
 import br.com.studo.dao.LoginDAO;
 import br.com.studo.domain.Disciplina;
 import br.com.studo.domain.Pessoa;
-import br.com.studo.util.Conexao;
 import br.com.studo.util.Mensagem;
 
 @ManagedBean
@@ -29,14 +27,7 @@ public class LoginController {
 
 	public void autenticar() {
 		try {
-			
-			Connection c = Conexao.getConexao();
-			
-			Messages.addGlobalInfo("conectou ");
-			
-			
-			
-			/*
+
 			LoginDAO dao = new LoginDAO();
 			pessoaLogada = dao.autenticar(user, password);
 			if (pessoaLogada.isExiste() == false) {
@@ -46,9 +37,9 @@ public class LoginController {
 			} else if (pessoaLogada.isExiste() == true && pessoaLogada.getCod_tipo() == 2) {
 				Faces.redirect("./paginas/pro/atividade.xhtml");
 			}
-			*/
+
 		} catch (Exception e) {
-			Messages.addGlobalError("Erro ao autenticar "+ e.getMessage());
+			Messages.addGlobalError("Erro ao autenticar " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
